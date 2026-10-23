@@ -1,16 +1,16 @@
 # TraffiQ — AI Adaptive Traffic Signal System (Frontend)
 
-Operational regional traffic management interface built with React, Vite, and Leaflet.
+Operational regional traffic management interface built with React, Vite, and Mapbox GL JS.
 
 ## Overview
 
-TraffiQ provides an interactive, map-first operations console for monitoring regional traffic corridors and candidate adaptive signal locations. This frontend application focuses on the pilot monitoring area in **Connaught Place, Central Delhi**.
+TraffiQ provides an interactive, contained operations dashboard for monitoring regional traffic corridors and candidate adaptive signal locations. This frontend application focuses on the pilot monitoring area in **Connaught Place, Central Delhi**.
 
 ## Tech Stack
 
 - **Framework:** React 19
 - **Build Tool:** Vite
-- **Mapping:** Leaflet & React-Leaflet (OpenStreetMap raster tiles)
+- **Mapping:** Mapbox GL JS (`streets-v12` vector style)
 - **Language:** JavaScript (`.jsx`, `.js`)
 - **Styling:** Standard CSS (`.css`)
 
@@ -20,10 +20,10 @@ TraffiQ provides an interactive, map-first operations console for monitoring reg
 src/
 ├── components/
 │   ├── Navbar.jsx               # Horizontal operations navigation bar
-│   ├── MapView.jsx              # Leaflet geographic map container & J1/J2 markers
-│   └── JunctionDetailsPanel.jsx # Compact junction telemetry details panel
+│   ├── MapView.jsx              # Contained Mapbox GL JS map container with J1/J2 markers
+│   └── JunctionDetailsPanel.jsx # Two-state junction panel (candidate list / inspected details)
 ├── pages/
-│   ├── OverviewPage.jsx         # Main operational workspace with map and local search
+│   ├── OverviewPage.jsx         # Contained two-column operational dashboard (65% map / 35% panel)
 │   ├── JunctionsPage.jsx        # Pilot candidate junctions table and map links
 │   ├── AnalyticsPage.jsx        # Traffic performance analytics empty state
 │   └── EmergencyEventsPage.jsx  # Emergency corridor and preemption monitoring empty state
@@ -36,19 +36,20 @@ src/
 └── main.jsx                     # Application entry point
 ```
 
-## Navigation & Operational Views
+## Dashboard Layout & Operations
 
-- **Overview:** Main operations workspace featuring an interactive OpenStreetMap canvas focused on Central Delhi, local junction search, compact circular markers (`J1`, `J2`), and a collapsible details panel.
+- **Overview:** Professional two-column operations layout:
+  - **Left (~65%):** Contained Mapbox interactive map (`streets-v12` style) with navigation controls, street-level zoom, and compact `J1` and `J2` markers with hover tooltips.
+  - **Right (~35%):** Dynamic junction panel that shows a compact list of monitored candidate junctions by default, and expands into full telemetry readiness details when a junction or marker is selected.
 - **Junctions:** Searchable catalog of registered candidate junctions with verified coordinates and a direct "View on map" navigation action.
-- **Analytics:** Clean empty state communicating that traffic performance metrics will display when simulation or backend telemetry is integrated.
-- **Emergency Events:** Clean emergency monitoring empty state explaining that green corridor status will appear once emergency dispatch feeds are connected.
+- **Analytics & Emergency Events:** Honest, professional empty states explaining telemetry and emergency service integration readiness.
 
 ## Pilot Candidate Junctions
 
-| Code | Junction Name | Corridor | Verified Coordinates | Verification Source |
-| :--- | :--- | :--- | :--- | :--- |
-| **J1** | Barakhamba Road – Tolstoy Marg | Barakhamba Rd | `28.6299° N, 77.2248° E` | OpenStreetMap Node & Road Intersection |
-| **J2** | Janpath – Tolstoy Marg | Janpath | `28.6264° N, 77.2193° E` | OpenStreetMap Node 5056205486 / Parivahan Survey |
+| Code | Junction Location | Area | Coordinates | Verification Source |
+| :---: | :--- | :--- | :--- | :--- |
+| **J1** | Barakhamba Road – Tolstoy Marg | Connaught Place Outer / Barakhamba | `28.6299° N, 77.2248° E` | OpenStreetMap (Intersection crossing) |
+| **J2** | Janpath – Tolstoy Marg | Janpath Commercial Corridor | `28.6264° N, 77.2193° E` | OpenStreetMap Node 5056205486 / Parivahan Survey |
 
 ## Getting Started
 
@@ -56,18 +57,31 @@ src/
 
 - Node.js (v18+ or v20+ recommended)
 - npm (v9+ or v10+)
+- Mapbox Public Access Token
 
-### Installation
+### Environment Configuration
+
+Create a local `.env.local` file in the root directory (based on `.env.example`):
 
 ```bash
-npm install
+cp .env.example .env.local
 ```
 
-### Development
+Define your Mapbox public token:
 
-Run the local development server:
+```env
+VITE_MAPBOX_ACCESS_TOKEN=pk.your_mapbox_token_here
+```
+
+*(If no token is configured, the interface displays an informative configuration notice.)*
+
+### Installation & Development
 
 ```bash
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
 ```
 

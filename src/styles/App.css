@@ -1,10 +1,10 @@
 /* ==========================================================================
    TraffiQ — Operational Application Stylesheet
-   Design: Clean white/light-neutral, dark charcoal text, restrained blue accent
+   Design: Clean white/light-neutral, navy/charcoal text, restrained blue accent
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   App Layout
+   App Core Layout
    -------------------------------------------------------------------------- */
 .traffiq-app {
   width: 100%;
@@ -21,7 +21,7 @@
   width: 100%;
   height: calc(100vh - var(--navbar-height));
   display: flex;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 /* --------------------------------------------------------------------------
@@ -34,7 +34,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
+  padding: 0 20px;
   flex-shrink: 0;
   z-index: 1010;
   user-select: none;
@@ -43,7 +43,7 @@
 .navbar-left {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 24px;
 }
 
 .navbar-brand {
@@ -142,17 +142,120 @@
 }
 
 /* --------------------------------------------------------------------------
-   Overview Workspace & Map Area
+   Overview Workspace Layout (Two-Column Contained Dashboard)
    -------------------------------------------------------------------------- */
-.overview-page {
-  position: relative;
+.overview-dashboard-container {
   width: 100%;
   height: 100%;
-  display: flex;
-  overflow: hidden;
+  overflow-y: auto;
+  background-color: var(--bg-app);
+  padding: 20px 24px 32px;
 }
 
-.map-wrapper {
+.overview-content-wrapper {
+  max-width: 1380px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.overview-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.overview-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.overview-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.overview-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* Two-column grid: 65% map / 35% junction panel */
+.overview-workspace-grid {
+  display: grid;
+  grid-template-columns: 65% 35%;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.overview-map-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.overview-map-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+}
+
+.map-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  background-color: #ffffff;
+}
+
+.map-card-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.map-card-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.map-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.map-style-badge {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.map-card-body {
+  position: relative;
+  width: 100%;
+  height: 560px;
+  min-height: 500px;
+  background-color: #f1f5f9;
+}
+
+.mapbox-map-wrapper {
   position: absolute;
   top: 0;
   left: 0;
@@ -160,264 +263,273 @@
   bottom: 0;
   width: 100%;
   height: 100%;
-  transition: right 0.2s ease;
 }
 
-.leaflet-map-canvas {
+.mapbox-canvas-container {
   width: 100%;
   height: 100%;
-  background-color: #e2e8f0;
-  z-index: 1;
 }
 
 /* --------------------------------------------------------------------------
-   Local Search Overlay on Map
+   Mapbox Markers and Tooltips
    -------------------------------------------------------------------------- */
-.map-search-container {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  width: 320px;
-  max-width: calc(100% - 28px);
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-}
-
-.map-search-bar {
-  display: flex;
-  align-items: center;
-  background-color: var(--bg-surface);
-  border: 1px solid var(--border-medium);
-  border-radius: 6px;
-  box-shadow: var(--shadow-md);
-  padding: 0 10px;
-  height: 38px;
-}
-
-.search-icon {
-  font-size: 13px;
-  color: var(--text-muted);
-  margin-right: 8px;
-}
-
-.search-input {
-  flex: 1;
-  border: none;
-  background: transparent;
-  font-size: 13px;
-  color: var(--text-primary);
-  outline: none;
-  font-family: inherit;
-}
-
-.search-input::placeholder {
-  color: var(--text-muted);
-}
-
-.search-clear-btn {
-  font-size: 16px;
-  color: var(--text-muted);
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-.search-clear-btn:hover {
-  color: var(--text-primary);
-  background-color: var(--bg-subtle);
-}
-
-.search-results-dropdown {
-  margin-top: 4px;
-  background-color: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: 6px;
-  box-shadow: var(--shadow-lg);
-  overflow: hidden;
-  max-height: 220px;
-  overflow-y: auto;
-}
-
-.search-result-item {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 12px;
-  text-align: left;
-  border-bottom: 1px solid var(--border-subtle);
-  transition: background-color 0.15s ease;
-}
-
-.search-result-item:last-child {
-  border-bottom: none;
-}
-
-.search-result-item:hover {
-  background-color: var(--bg-subtle);
-}
-
-.result-code {
-  font-size: 11px;
-  font-weight: 700;
-  background-color: var(--bg-subtle);
-  border: 1px solid var(--border-subtle);
-  padding: 2px 6px;
-  border-radius: 4px;
-  color: var(--text-primary);
-}
-
-.result-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.result-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.result-area {
-  font-size: 11px;
-  color: var(--text-muted);
-}
-
-.search-no-results {
-  padding: 12px;
-  font-size: 12px;
-  color: var(--text-muted);
-  text-align: center;
-}
-
-/* --------------------------------------------------------------------------
-   Circular Map Markers Labelled J1, J2
-   -------------------------------------------------------------------------- */
-.junction-marker-wrapper {
-  background: transparent;
-  border: none;
-}
-
-.junction-marker-disc {
-  width: 26px;
-  height: 26px;
+.mapbox-junction-marker {
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background-color: #ffffff;
   border: 2px solid #334155;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+  padding: 0;
 }
 
-.marker-code-text {
+.marker-code-badge {
   font-size: 11px;
   font-weight: 700;
   color: #0f172a;
   line-height: 1;
 }
 
-.junction-marker-disc:hover {
-  transform: scale(1.1);
+.mapbox-junction-marker:hover {
+  transform: scale(1.12);
   border-color: #0f172a;
 }
 
-.junction-marker-disc.is-selected {
+.mapbox-junction-marker.is-selected {
   background-color: var(--accent-primary);
   border-color: #1d4ed8;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25), 0 2px 5px rgba(0, 0, 0, 0.2);
-  transform: scale(1.1);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25), 0 2px 6px rgba(0, 0, 0, 0.22);
+  transform: scale(1.12);
 }
 
-.junction-marker-disc.is-selected .marker-code-text {
+.mapbox-junction-marker.is-selected .marker-code-badge {
   color: #ffffff;
 }
 
-/* --------------------------------------------------------------------------
-   Leaflet Tooltip Overrides
-   -------------------------------------------------------------------------- */
-.leaflet-tooltip.junction-map-tooltip {
-  background-color: var(--bg-surface) !important;
-  border: 1px solid var(--border-medium) !important;
-  border-radius: 4px !important;
-  box-shadow: var(--shadow-sm) !important;
-  padding: 3px 8px !important;
-  font-family: var(--font-sans) !important;
-  font-size: 11px !important;
-  font-weight: 500 !important;
-  color: var(--text-primary) !important;
-  white-space: nowrap !important;
+/* Mapbox popup overrides */
+.mapboxgl-popup.mapbox-junction-tooltip {
+  pointer-events: none;
 }
 
-.tooltip-tag {
+.mapboxgl-popup.mapbox-junction-tooltip .mapboxgl-popup-content {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: 4px;
+  box-shadow: var(--shadow-sm);
+  padding: 4px 8px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--text-primary);
+}
+
+.mapboxgl-popup.mapbox-junction-tooltip .mapboxgl-popup-tip {
+  border-top-color: var(--border-medium);
+}
+
+.map-tooltip-content {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.tooltip-badge {
+  font-weight: 700;
   color: var(--accent-primary);
-  margin-right: 4px;
 }
 
-.leaflet-tooltip.junction-map-tooltip::before {
-  border-top-color: var(--border-medium) !important;
-}
-
-.leaflet-tooltip.junction-map-tooltip.is-selected {
-  border-color: var(--accent-primary) !important;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15), var(--shadow-sm) !important;
-}
-
-.leaflet-tooltip.junction-map-tooltip.is-selected::before {
-  border-top-color: var(--accent-primary) !important;
+.tooltip-label {
+  font-weight: 500;
+  color: var(--text-primary);
 }
 
 /* --------------------------------------------------------------------------
-   Junction Details Panel
+   Mapbox Setup Notice (When token is not configured)
    -------------------------------------------------------------------------- */
-.junction-panel {
+.mapbox-setup-notice {
   position: absolute;
-  top: 14px;
-  right: 14px;
-  width: 340px;
-  max-height: calc(100% - 28px);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8fafc;
+  padding: 24px;
+}
+
+.setup-notice-card {
+  max-width: 480px;
+  background-color: #ffffff;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.setup-notice-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #d97706;
+  background-color: #fef3c7;
+  padding: 2px 7px;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.setup-notice-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.setup-notice-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.setup-notice-code {
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-primary);
+}
+
+.setup-notice-help {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.setup-notice-help code {
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}
+
+.setup-notice-error {
+  font-size: 12px;
+  color: #b91c1c;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  padding: 6px 10px;
+  border-radius: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   Right-Hand Junction Panel
+   -------------------------------------------------------------------------- */
+.overview-panel-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.overview-panel-card {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: 8px;
-  box-shadow: var(--shadow-lg);
-  z-index: 1000;
+  box-shadow: var(--shadow-sm);
+  height: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  animation: panelSlideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes panelSlideIn {
-  from {
-    opacity: 0;
-    transform: translateX(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.panel-header {
+.junction-sidebar-panel {
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Default state: Junction list header */
+.panel-header-default {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
-  padding: 14px 16px 12px;
+  padding: 14px 18px 12px;
   border-bottom: 1px solid var(--border-subtle);
-  background-color: #fafafa;
+  background-color: #ffffff;
 }
 
 .panel-header-title {
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+
+.panel-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.panel-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.panel-count-pill {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+/* Selected state: Details header */
+.panel-header-selected {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  background-color: #ffffff;
+}
+
+.btn-back-to-list {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-primary);
+  cursor: pointer;
+  padding: 0;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.15s ease;
+}
+
+.btn-back-to-list:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+.panel-selected-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
 .panel-eyebrow-row {
@@ -436,50 +548,116 @@
   border-radius: 3px;
 }
 
-.panel-eyebrow {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
-}
-
-.panel-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.3;
-  margin-top: 2px;
-}
-
-.panel-close-btn {
-  font-size: 20px;
-  line-height: 1;
-  color: var(--text-muted);
-  width: 28px;
-  height: 28px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s ease;
-  margin-top: -2px;
-  margin-right: -4px;
-}
-
-.panel-close-btn:hover {
-  background-color: var(--border-subtle);
-  color: var(--text-primary);
-}
-
+/* Panel Body */
 .panel-body {
-  padding: 16px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
   gap: 14px;
   overflow-y: auto;
+  flex: 1;
 }
 
+.panel-list-body {
+  gap: 12px;
+}
+
+.panel-list-help {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+/* Junction Cards List */
+.junction-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.junction-summary-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  background-color: #ffffff;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.junction-summary-card:hover {
+  border-color: var(--accent-border);
+  background-color: #fbfdff;
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.card-top-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-code-pill {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0f172a;
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-medium);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.card-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.card-meta-row {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.card-cross-street strong {
+  color: var(--text-primary);
+}
+
+.card-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.status-badge-neutral-compact {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.status-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--text-muted);
+}
+
+.card-inspect-action {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent-primary);
+}
+
+/* Detail Sections */
 .panel-section {
   display: flex;
   flex-direction: column;
@@ -515,13 +693,6 @@
   border-radius: 4px;
   width: fit-content;
   margin-top: 2px;
-}
-
-.status-badge-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: var(--text-muted);
 }
 
 .status-badge-text {
@@ -858,8 +1029,19 @@
 }
 
 /* --------------------------------------------------------------------------
-   Responsive Layout (Laptop & Tablet)
+   Responsive Layout (Laptops & Tablets)
    -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .overview-workspace-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .map-card-body {
+    height: 440px;
+    min-height: 380px;
+  }
+}
+
 @media (max-width: 900px) {
   .navbar-center {
     display: none;
@@ -867,6 +1049,10 @@
 }
 
 @media (max-width: 768px) {
+  .overview-dashboard-container {
+    padding: 16px;
+  }
+
   .page-container {
     padding: 16px;
   }
@@ -875,13 +1061,8 @@
     width: 100%;
   }
 
-  .junction-panel {
-    top: auto;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    width: 100%;
-    max-height: 50vh;
-    border-radius: 12px 12px 0 0;
+  .map-card-body {
+    height: 380px;
+    min-height: 320px;
   }
 }

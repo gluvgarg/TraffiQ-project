@@ -9,11 +9,16 @@
 export const REGION_INFO = {
   name: 'Connaught Place, Central Delhi',
   shortName: 'Central Delhi',
-  center: [28.6285, 77.2220], // Centered between CP and Tolstoy Marg pilot junctions
+  center: [28.6285, 77.2220], // [lat, lng]
+  mapboxCenter: [77.2220, 28.6285], // [lng, lat] for Mapbox GL JS
   defaultZoom: 15,
   pilotAreaBounds: [
     [28.6240, 77.2150],
     [28.6340, 77.2280],
+  ],
+  mapboxBounds: [
+    [77.2140, 28.6230],
+    [77.2300, 28.6350],
   ],
 }
 

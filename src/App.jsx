@@ -18,7 +18,7 @@ function App() {
     setSelectedJunction(junction)
   }
 
-  const handleClosePanel = () => {
+  const handleClearSelection = () => {
     setSelectedJunction(null)
   }
 
@@ -39,7 +39,7 @@ function App() {
           <OverviewPage
             selectedJunction={selectedJunction}
             onSelectJunction={handleSelectJunction}
-            onClosePanel={handleClosePanel}
+            onClearSelection={handleClearSelection}
           />
         )}
 
