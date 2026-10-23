@@ -1,15 +1,16 @@
-# TraffiQ — Frontend
+# TraffiQ — AI Adaptive Traffic Signal System (Frontend)
 
-Regional AI-based Traffic Management System frontend application.
+Operational regional traffic management interface built with React, Vite, and Leaflet.
 
 ## Overview
 
-TraffiQ is an AI-powered regional traffic management platform. This repository contains the frontend application built with React and Vite.
+TraffiQ provides an interactive, map-first operations console for monitoring regional traffic corridors and candidate adaptive signal locations. This frontend application focuses on the pilot monitoring area in **Connaught Place, Central Delhi**.
 
 ## Tech Stack
 
 - **Framework:** React 19
 - **Build Tool:** Vite
+- **Mapping:** Leaflet & React-Leaflet (OpenStreetMap raster tiles)
 - **Language:** JavaScript (`.jsx`, `.js`)
 - **Styling:** Standard CSS (`.css`)
 
@@ -17,26 +18,46 @@ TraffiQ is an AI-powered regional traffic management platform. This repository c
 
 ```text
 src/
-├── components/     # Reusable UI components
-├── pages/          # View/screen components
-├── data/           # Static datasets and configuration
-├── styles/         # Global and modular CSS stylesheets
-│   ├── global.css  # Typography, resets, CSS variables, viewport settings
-│   └── App.css     # App-level styling
-├── App.jsx         # Root application component
-└── main.jsx        # React application entry point
+├── components/
+│   ├── Navbar.jsx               # Horizontal operations navigation bar
+│   ├── MapView.jsx              # Leaflet geographic map container & J1/J2 markers
+│   └── JunctionDetailsPanel.jsx # Compact junction telemetry details panel
+├── pages/
+│   ├── OverviewPage.jsx         # Main operational workspace with map and local search
+│   ├── JunctionsPage.jsx        # Pilot candidate junctions table and map links
+│   ├── AnalyticsPage.jsx        # Traffic performance analytics empty state
+│   └── EmergencyEventsPage.jsx  # Emergency corridor and preemption monitoring empty state
+├── data/
+│   └── junctions.js             # Verified coordinates and candidate junction dataset
+├── styles/
+│   ├── global.css               # Typography, resets, color tokens, viewport settings
+│   └── App.css                  # Layout, navbar, map, table, and panel styles
+├── App.jsx                      # Root application component with view routing
+└── main.jsx                     # Application entry point
 ```
+
+## Navigation & Operational Views
+
+- **Overview:** Main operations workspace featuring an interactive OpenStreetMap canvas focused on Central Delhi, local junction search, compact circular markers (`J1`, `J2`), and a collapsible details panel.
+- **Junctions:** Searchable catalog of registered candidate junctions with verified coordinates and a direct "View on map" navigation action.
+- **Analytics:** Clean empty state communicating that traffic performance metrics will display when simulation or backend telemetry is integrated.
+- **Emergency Events:** Clean emergency monitoring empty state explaining that green corridor status will appear once emergency dispatch feeds are connected.
+
+## Pilot Candidate Junctions
+
+| Code | Junction Name | Corridor | Verified Coordinates | Verification Source |
+| :--- | :--- | :--- | :--- | :--- |
+| **J1** | Barakhamba Road – Tolstoy Marg | Barakhamba Rd | `28.6299° N, 77.2248° E` | OpenStreetMap Node & Road Intersection |
+| **J2** | Janpath – Tolstoy Marg | Janpath | `28.6264° N, 77.2193° E` | OpenStreetMap Node 5056205486 / Parivahan Survey |
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js (version 18+ or 20+ recommended)
-- npm (version 9+ or 10+)
+- Node.js (v18+ or v20+ recommended)
+- npm (v9+ or v10+)
 
 ### Installation
-
-Clone the repository and install dependencies:
 
 ```bash
 npm install
@@ -44,24 +65,23 @@ npm install
 
 ### Development
 
-To run the local development server with Hot Module Replacement (HMR):
+Run the local development server:
 
 ```bash
 npm run dev
 ```
 
-Open your browser and navigate to `http://localhost:5173`.
+Open `http://localhost:5173/` in your browser.
 
-### Production Build
-
-To build the application for production:
+### Production Build & Linting
 
 ```bash
+# Run linter
+npm run lint
+
+# Build production bundle
 npm run build
-```
 
-To preview the production build locally:
-
-```bash
+# Preview production build
 npm run preview
 ```

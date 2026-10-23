@@ -1,5 +1,6 @@
 /* ==========================================================================
    TraffiQ Frontend — Global CSS Foundation
+   Light, spacious, and operational interface
    ========================================================================== */
 
 /* Modern CSS Reset & Box Sizing */
@@ -11,68 +12,80 @@
   padding: 0;
 }
 
-/* CSS Custom Properties & Typography */
+/* CSS Variables — Light Theme & Refined Palette */
 :root {
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* Color Palette */
-  --bg-main: #0b0f17;
-  --bg-card: #111827;
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --border-subtle: #1e293b;
-  --accent-cyan: #38bdf8;
-  --accent-green: #22c55e;
+  /* Neutrals */
+  --bg-app: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-subtle: #f1f5f9;
+  --border-subtle: #e2e8f0;
+  --border-medium: #cbd5e1;
 
-  /* Typography defaults */
+  /* Typography */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+
+  /* Single restrained accent */
+  --accent-primary: #2563eb;
+  --accent-light: #eff6ff;
+  --accent-border: #bfdbfe;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+
+  /* Navbar height */
+  --navbar-height: 48px;
+
   font-family: var(--font-sans);
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.5;
-  color-scheme: dark;
-  color: var(--text-main);
-  background-color: var(--bg-main);
+  color-scheme: light;
+  color: var(--text-primary);
+  background-color: var(--bg-app);
 
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Viewport and Layout Foundations */
+/* Viewport & Body */
 html,
 body {
   width: 100%;
-  min-height: 100vh;
+  height: 100%;
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 #root {
   width: 100%;
-  min-height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
 }
 
-/* Base Headings & Text */
+/* Headings & Base Typography */
 h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
   font-weight: 600;
   line-height: 1.25;
-  color: var(--text-main);
 }
 
 p {
-  color: var(--text-muted);
-}
-
-a {
-  color: var(--accent-cyan);
-  text-decoration: none;
+  color: var(--text-secondary);
 }
 
 button {
   font-family: inherit;
   font-size: inherit;
+  cursor: pointer;
+  background: none;
+  border: none;
 }
