@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
-import { REGION_INFO, JUNCTIONS } from '../data/junctions.js'
+import { REGION_INFO } from '../data/junctions.js'
+import { DEMO_TRAFFIC_DATA } from '../data/demoTrafficData.js'
 
 function MapView({ selectedJunction, onSelectJunction }) {
   const mapContainerRef = useRef(null)
@@ -12,12 +13,12 @@ function MapView({ selectedJunction, onSelectJunction }) {
 
   const mapboxToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN
 
-  // Keep a ref to the currently selected junction for event callbacks
+  // Keep a ref to currently selected junction for event callbacks
   useEffect(() => {
     selectedRef.current = selectedJunction
   }, [selectedJunction])
 
-  // Track map initialization error state (e.g. invalid token)
+  // Track map error state
   const [mapError, setMapError] = useState(null)
 
   useEffect(() => {
@@ -49,7 +50,7 @@ function MapView({ selectedJunction, onSelectJunction }) {
       // Fit map to show pilot area
       map.on('load', () => {
         map.fitBounds(REGION_INFO.mapboxBounds, {
-          padding: 50,
+          padding: 60,
           maxZoom: 16,
           duration: 0,
         })
@@ -61,31 +62,71 @@ function MapView({ selectedJunction, onSelectJunction }) {
         }
       })
 
-      // Add junction markers
-      JUNCTIONS.forEach((junction) => {
+      // Add compact, recognisable traffic-signal markers
+      DEMO_TRAFFIC_DATA.forEach((junction) => {
         const coords = [junction.coordinates.lng, junction.coordinates.lat]
 
-        // Create marker DOM node
+        // Create the traffic-signal marker DOM element
         const markerEl = document.createElement('button')
         markerEl.type = 'button'
-        markerEl.className = 'mapbox-junction-marker'
+        markerEl.className = 'traffic-signal-marker'
         markerEl.id = `marker-${junction.id}`
-        markerEl.setAttribute('aria-label', `${junction.code}: ${junction.name}`)
+        markerEl.setAttribute(
+          'aria-label',
+          `${junction.code}: ${junction.name} - Simulated signal: ${junction.activePhase}`
+        )
 
-        const codeSpan = document.createElement('span')
-        codeSpan.className = 'marker-code-badge'
-        codeSpan.textContent = junction.code
-        markerEl.appendChild(codeSpan)
+        // Marker top ID badge (J1, J2)
+        const badgeEl = document.createElement('div')
+        badgeEl.className = 'signal-marker-badge'
+        badgeEl.textContent = junction.code
+        markerEl.appendChild(badgeEl)
 
-        // Create tooltip popup (shown on hover or when selected)
+        // Traffic signal housing with 3 lamps: red, amber, green
+        const housingEl = document.createElement('div')
+        housingEl.className = 'signal-marker-housing'
+
+        // Red lamp
+        const redLamp = document.createElement('div')
+        redLamp.className = `signal-lamp lamp-red ${junction.signalLampState === 'red' ? 'lamp-active' : 'lamp-dim'}`
+        housingEl.appendChild(redLamp)
+
+        // Amber lamp
+        const amberLamp = document.createElement('div')
+        amberLamp.className = `signal-lamp lamp-amber ${junction.signalLampState === 'amber' ? 'lamp-active' : 'lamp-dim'}`
+        housingEl.appendChild(amberLamp)
+
+        // Green lamp (active for J1 & J2 in demo data)
+        const greenLamp = document.createElement('div')
+        greenLamp.className = `signal-lamp lamp-green ${junction.signalLampState === 'green' ? 'lamp-active' : 'lamp-dim'}`
+        housingEl.appendChild(greenLamp)
+
+        markerEl.appendChild(housingEl)
+
+        // Anchor pole
+        const poleEl = document.createElement('div')
+        poleEl.className = 'signal-marker-pole'
+        markerEl.appendChild(poleEl)
+
+        // Tooltip popup (shows junction name and demo phase on hover)
         const popup = new mapboxgl.Popup({
-          offset: 14,
+          offset: 16,
           closeButton: false,
           closeOnClick: false,
-          className: 'mapbox-junction-tooltip',
-        }).setHTML(
-          `<div class="map-tooltip-content"><strong class="tooltip-badge">${junction.code}</strong> <span class="tooltip-label">${junction.name}</span></div>`
-        )
+          className: 'mapbox-signal-tooltip',
+        }).setHTML(`
+          <div class="map-signal-tooltip-content">
+            <div class="tooltip-header">
+              <strong class="tooltip-badge">${junction.code}</strong>
+              <span class="tooltip-title">${junction.name}</span>
+            </div>
+            <div class="tooltip-phase-row">
+              <span class="phase-dot phase-green"></span>
+              <span class="phase-text">${junction.activePhase} (${junction.greenTimeRemaining}s)</span>
+              <span class="phase-demo-tag">DEMO</span>
+            </div>
+          </div>
+        `)
 
         popupsRef.current[junction.id] = popup
 
@@ -101,16 +142,17 @@ function MapView({ selectedJunction, onSelectJunction }) {
           }
         })
 
-        // Marker click handler
+        // Click handler to select junction
         markerEl.addEventListener('click', (e) => {
           e.stopPropagation()
           e.preventDefault()
           onSelectJunction(junction)
         })
 
+        // Anchor at bottom of pole so base sits exactly on the intersection
         const marker = new mapboxgl.Marker({
           element: markerEl,
-          anchor: 'center',
+          anchor: 'bottom',
         })
           .setLngLat(coords)
           .addTo(map)
@@ -149,7 +191,7 @@ function MapView({ selectedJunction, onSelectJunction }) {
     }
   }, [mapboxToken, onSelectJunction])
 
-  // Update marker styles and map position when selectedJunction changes
+  // Update marker selection styles and map position when selectedJunction changes
   useEffect(() => {
     const map = mapRef.current
     if (!map) return
@@ -209,7 +251,7 @@ function MapView({ selectedJunction, onSelectJunction }) {
       <div
         ref={mapContainerRef}
         className="mapbox-canvas-container"
-        aria-label="Mapbox traffic operations map"
+        aria-label="Mapbox regional traffic operations map"
       />
     </div>
   )

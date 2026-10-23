@@ -1,10 +1,14 @@
-import { JUNCTIONS } from '../data/junctions.js'
+import { DEMO_TRAFFIC_DATA } from '../data/demoTrafficData.js'
 
 function JunctionDetailsPanel({ selectedJunction, onSelectJunction, onClearSelection }) {
   // -------------------------------------------------------------------------
-  // Case A: A junction is currently selected -> show detailed metadata
+  // Case A: A junction is currently selected -> show simulated demo signal details
   // -------------------------------------------------------------------------
   if (selectedJunction) {
+    // Find the latest demo record for this junction
+    const demoData =
+      DEMO_TRAFFIC_DATA.find((j) => j.id === selectedJunction.id) || selectedJunction
+
     return (
       <aside className="junction-sidebar-panel" aria-label="Selected Junction Details">
         <div className="panel-header-selected">
@@ -18,57 +22,69 @@ function JunctionDetailsPanel({ selectedJunction, onSelectJunction, onClearSelec
           </button>
 
           <div className="panel-selected-title-block">
-            <div className="panel-eyebrow-row">
-              <span className="panel-code-badge">{selectedJunction.code}</span>
-              <span className="panel-eyebrow">{selectedJunction.type}</span>
+            <div className="panel-header-badges">
+              <span className="panel-code-badge">{demoData.code}</span>
+              <span className="panel-demo-tag">DEMO DATA</span>
             </div>
-            <h2 className="panel-title">{selectedJunction.name}</h2>
+            <h2 className="panel-title">{demoData.name}</h2>
+            <span className="panel-road-names">
+              {demoData.corridor} &times; {demoData.crossStreet}
+            </span>
           </div>
         </div>
 
         <div className="panel-body">
-          <div className="panel-section">
-            <span className="section-label">Operational Status</span>
-            <div className="status-badge-neutral">
-              <span className="status-badge-dot" />
-              <span className="status-badge-text">{selectedJunction.status}</span>
+          {/* 1. Control Mode */}
+          <div className="signal-metric-card">
+            <span className="metric-label">Control Mode</span>
+            <div className="metric-value-row">
+              <span className="mode-badge-ai">{demoData.mode}</span>
             </div>
           </div>
 
-          <div className="panel-section">
-            <span className="section-label">Geographic Area</span>
-            <p className="section-value">{selectedJunction.area}</p>
-            <p className="section-subvalue">
-              {selectedJunction.corridor} &times; {selectedJunction.crossStreet}
+          {/* 2. Current Simulated Signal Phase */}
+          <div className="signal-metric-card">
+            <span className="metric-label">Current Simulated Signal Phase</span>
+            <div className="phase-indicator-row">
+              <div className="mini-traffic-light" aria-hidden="true">
+                <span className={`mini-lamp red ${demoData.signalLampState === 'red' ? 'active' : ''}`} />
+                <span className={`mini-lamp amber ${demoData.signalLampState === 'amber' ? 'active' : ''}`} />
+                <span className={`mini-lamp green ${demoData.signalLampState === 'green' ? 'active' : ''}`} />
+              </div>
+              <span className="phase-name">{demoData.activePhase}</span>
+            </div>
+          </div>
+
+          {/* 3. Remaining Green Time */}
+          <div className="signal-metric-card">
+            <span className="metric-label">Remaining Green Time</span>
+            <p className="metric-primary-value">
+              <strong>{demoData.greenTimeRemaining}</strong> seconds
             </p>
           </div>
 
-          <div className="panel-section">
-            <span className="section-label">Coordinates</span>
-            <div className="coordinates-box">
-              <div className="coordinate-row">
-                <span className="coord-label">Latitude:</span>
-                <span className="coord-value">{selectedJunction.coordinates.lat.toFixed(4)}&deg; N</span>
-              </div>
-              <div className="coordinate-row">
-                <span className="coord-label">Longitude:</span>
-                <span className="coord-value">{selectedJunction.coordinates.lng.toFixed(4)}&deg; E</span>
-              </div>
-            </div>
+          {/* 4. Vehicles Waiting */}
+          <div className="signal-metric-card">
+            <span className="metric-label">Vehicles Waiting</span>
+            <p className="metric-primary-value">
+              <strong>{demoData.vehiclesWaiting}</strong> vehicles
+            </p>
           </div>
 
-          {selectedJunction.verification && (
-            <div className="panel-section">
-              <span className="section-label">Location Verification</span>
-              <p className="verification-text">{selectedJunction.verification.source}</p>
-            </div>
-          )}
+          {/* 5. Estimated Demo Queue Length */}
+          <div className="signal-metric-card">
+            <span className="metric-label">Estimated Demo Queue Length</span>
+            <p className="metric-primary-value">
+              <strong>{demoData.queueLength}</strong> metres
+            </p>
+          </div>
 
-          <div className="panel-section panel-section-notice">
-            <span className="section-label">Telemetry Notice</span>
-            <p className="notice-text">
-              Signal timings, vehicle density, and adaptive traffic measurements will appear here
-              once regional backend telemetry is connected.
+          {/* Operator Notice */}
+          <div className="panel-disclaimer-notice">
+            <span className="disclaimer-title">SYNTHETIC OPERATOR RECORD</span>
+            <p className="disclaimer-text">
+              These values are synthetic demonstration metrics for interface testing.
+              Physical traffic signal controllers are not yet connected to this console.
             </p>
           </div>
         </div>
@@ -84,18 +100,18 @@ function JunctionDetailsPanel({ selectedJunction, onSelectJunction, onClearSelec
       <div className="panel-header-default">
         <div className="panel-header-title">
           <span className="panel-eyebrow">PILOT CORRIDOR</span>
-          <h2 className="panel-title">Candidate Junctions</h2>
+          <h2 className="panel-title">Monitored Signals</h2>
         </div>
-        <span className="panel-count-pill">{JUNCTIONS.length} monitored</span>
+        <span className="panel-count-pill">{DEMO_TRAFFIC_DATA.length} demo signals</span>
       </div>
 
       <div className="panel-body panel-list-body">
         <p className="panel-list-help">
-          Select a junction below or click its map marker to inspect coordinates and telemetry readiness.
+          Select a junction below or click its map signal to inspect simulated timings and phase states.
         </p>
 
         <div className="junction-cards-list" role="list">
-          {JUNCTIONS.map((junction) => (
+          {DEMO_TRAFFIC_DATA.map((junction) => (
             <button
               key={junction.id}
               type="button"
@@ -104,8 +120,11 @@ function JunctionDetailsPanel({ selectedJunction, onSelectJunction, onClearSelec
               role="listitem"
             >
               <div className="card-top-row">
-                <span className="card-code-pill">{junction.code}</span>
-                <span className="card-name">{junction.name}</span>
+                <div className="card-id-group">
+                  <span className="card-code-pill">{junction.code}</span>
+                  <span className="card-name">{junction.name}</span>
+                </div>
+                <span className="card-demo-badge">DEMO</span>
               </div>
 
               <div className="card-meta-row">
@@ -114,12 +133,17 @@ function JunctionDetailsPanel({ selectedJunction, onSelectJunction, onClearSelec
                 </span>
               </div>
 
+              <div className="card-phase-preview-row">
+                <div className="card-phase-indicator">
+                  <span className="card-phase-dot green" />
+                  <span className="card-phase-text">{junction.activePhase}</span>
+                </div>
+                <span className="card-green-time">{junction.greenTimeRemaining}s green</span>
+              </div>
+
               <div className="card-status-row">
-                <span className="status-badge-neutral-compact">
-                  <span className="status-badge-dot" />
-                  {junction.status}
-                </span>
-                <span className="card-inspect-action">Inspect &rarr;</span>
+                <span className="card-mode-tag">{junction.mode}</span>
+                <span className="card-inspect-action">Inspect signal &rarr;</span>
               </div>
             </button>
           ))}

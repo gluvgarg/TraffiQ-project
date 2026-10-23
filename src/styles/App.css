@@ -184,7 +184,7 @@
   color: var(--text-secondary);
 }
 
-/* Two-column grid: 65% map / 35% junction panel */
+/* Two-column grid: ~65% map / ~35% junction panel */
 .overview-workspace-grid {
   display: grid;
   grid-template-columns: 65% 35%;
@@ -271,81 +271,195 @@
 }
 
 /* --------------------------------------------------------------------------
-   Mapbox Markers and Tooltips
+   Traffic Signal Map Markers
    -------------------------------------------------------------------------- */
-.mapbox-junction-marker {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background-color: #ffffff;
-  border: 2px solid #334155;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+.traffic-signal-marker {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  background: transparent;
+  border: none;
   cursor: pointer;
-  transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
   padding: 0;
+  user-select: none;
+  transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.marker-code-badge {
-  font-size: 11px;
-  font-weight: 700;
+.traffic-signal-marker:hover {
+  transform: translateY(-2px) scale(1.08);
+}
+
+.traffic-signal-marker.is-selected {
+  transform: translateY(-3px) scale(1.15);
+}
+
+.signal-marker-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   color: #0f172a;
-  line-height: 1;
+  background-color: #ffffff;
+  border: 1.5px solid #334155;
+  border-radius: 4px;
+  padding: 1px 5px;
+  line-height: 1.1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  margin-bottom: 2px;
+  transition: all 0.15s ease;
 }
 
-.mapbox-junction-marker:hover {
-  transform: scale(1.12);
+.traffic-signal-marker:hover .signal-marker-badge {
   border-color: #0f172a;
 }
 
-.mapbox-junction-marker.is-selected {
+.traffic-signal-marker.is-selected .signal-marker-badge {
   background-color: var(--accent-primary);
   border-color: #1d4ed8;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25), 0 2px 6px rgba(0, 0, 0, 0.22);
-  transform: scale(1.12);
-}
-
-.mapbox-junction-marker.is-selected .marker-code-badge {
   color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Mapbox popup overrides */
-.mapboxgl-popup.mapbox-junction-tooltip {
+.signal-marker-housing {
+  width: 20px;
+  background-color: #0f172a;
+  border: 1.5px solid #334155;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
+  padding: 4px 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.traffic-signal-marker.is-selected .signal-marker-housing {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.4), 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.signal-lamp {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  transition: all 0.2s ease;
+}
+
+.lamp-red.lamp-dim {
+  background-color: #3b1212;
+  opacity: 0.35;
+}
+
+.lamp-red.lamp-active {
+  background-color: #ef4444;
+  box-shadow: 0 0 8px #ef4444;
+  opacity: 1;
+}
+
+.lamp-amber.lamp-dim {
+  background-color: #38240b;
+  opacity: 0.35;
+}
+
+.lamp-amber.lamp-active {
+  background-color: #f59e0b;
+  box-shadow: 0 0 8px #f59e0b;
+  opacity: 1;
+}
+
+.lamp-green.lamp-dim {
+  background-color: #0d2816;
+  opacity: 0.35;
+}
+
+.lamp-green.lamp-active {
+  background-color: #22c55e;
+  box-shadow: 0 0 8px #22c55e;
+  opacity: 1;
+}
+
+.signal-marker-pole {
+  width: 3px;
+  height: 6px;
+  background-color: #475569;
+  border-radius: 0 0 1px 1px;
+}
+
+/* --------------------------------------------------------------------------
+   Mapbox Tooltip Popups
+   -------------------------------------------------------------------------- */
+.mapboxgl-popup.mapbox-signal-tooltip {
   pointer-events: none;
 }
 
-.mapboxgl-popup.mapbox-junction-tooltip .mapboxgl-popup-content {
+.mapboxgl-popup.mapbox-signal-tooltip .mapboxgl-popup-content {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-medium);
-  border-radius: 4px;
-  box-shadow: var(--shadow-sm);
-  padding: 4px 8px;
+  border-radius: 6px;
+  box-shadow: var(--shadow-md);
+  padding: 6px 10px;
   font-family: var(--font-sans);
-  font-size: 11px;
   color: var(--text-primary);
 }
 
-.mapboxgl-popup.mapbox-junction-tooltip .mapboxgl-popup-tip {
+.mapboxgl-popup.mapbox-signal-tooltip .mapboxgl-popup-tip {
   border-top-color: var(--border-medium);
 }
 
-.map-tooltip-content {
+.map-signal-tooltip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+.tooltip-header {
   display: flex;
   align-items: center;
-  gap: 5px;
-  white-space: nowrap;
+  gap: 6px;
 }
 
 .tooltip-badge {
   font-weight: 700;
   color: var(--accent-primary);
+  font-family: var(--font-mono);
 }
 
-.tooltip-label {
-  font-weight: 500;
+.tooltip-title {
+  font-size: 12px;
+  font-weight: 600;
   color: var(--text-primary);
+}
+
+.tooltip-phase-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.phase-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.phase-dot.phase-green {
+  background-color: #22c55e;
+  box-shadow: 0 0 5px #22c55e;
+}
+
+.phase-demo-tag {
+  font-size: 9px;
+  font-weight: 700;
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #64748b;
+  padding: 1px 4px;
+  border-radius: 3px;
 }
 
 /* --------------------------------------------------------------------------
@@ -457,7 +571,7 @@
   height: 100%;
 }
 
-/* Default state: Junction list header */
+/* Default state: Monitored signals list header */
 .panel-header-default {
   display: flex;
   align-items: center;
@@ -532,20 +646,37 @@
   gap: 3px;
 }
 
-.panel-eyebrow-row {
+.panel-header-badges {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
 .panel-code-badge {
+  font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 700;
   color: var(--accent-primary);
   background-color: var(--accent-light);
   border: 1px solid var(--accent-border);
-  padding: 1px 5px;
+  padding: 1px 6px;
   border-radius: 3px;
+}
+
+.panel-demo-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #0369a1;
+  background-color: #e0f2fe;
+  border: 1px solid #bae6fd;
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+.panel-road-names {
+  font-size: 12px;
+  color: var(--text-secondary);
 }
 
 /* Panel Body */
@@ -553,7 +684,7 @@
   padding: 18px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   overflow-y: auto;
   flex: 1;
 }
@@ -599,10 +730,17 @@
 .card-top-row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+}
+
+.card-id-group {
+  display: flex;
+  align-items: center;
   gap: 8px;
 }
 
 .card-code-pill {
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
   color: #0f172a;
@@ -618,6 +756,16 @@
   color: var(--text-primary);
 }
 
+.card-demo-badge {
+  font-size: 9px;
+  font-weight: 700;
+  color: #0369a1;
+  background-color: #e0f2fe;
+  border: 1px solid #bae6fd;
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
 .card-meta-row {
   font-size: 12px;
   color: var(--text-secondary);
@@ -625,6 +773,44 @@
 
 .card-cross-street strong {
   color: var(--text-primary);
+}
+
+.card-phase-preview-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  padding: 5px 8px;
+  border-radius: 4px;
+  margin-top: 2px;
+}
+
+.card-phase-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.card-phase-dot.green {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #22c55e;
+  box-shadow: 0 0 5px #22c55e;
+}
+
+.card-phase-text {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.card-green-time {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
 }
 
 .card-status-row {
@@ -636,19 +822,10 @@
   border-top: 1px solid var(--border-subtle);
 }
 
-.status-badge-neutral-compact {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
+.card-mode-tag {
   font-size: 11px;
-  color: var(--text-muted);
-}
-
-.status-badge-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: var(--text-muted);
+  font-weight: 700;
+  color: var(--accent-primary);
 }
 
 .card-inspect-action {
@@ -657,14 +834,20 @@
   color: var(--accent-primary);
 }
 
-/* Detail Sections */
-.panel-section {
+/* --------------------------------------------------------------------------
+   Operator Selected Signal Detail Cards
+   -------------------------------------------------------------------------- */
+.signal-metric-card {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  padding: 10px 12px;
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
 }
 
-.section-label {
+.metric-label {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
@@ -672,74 +855,102 @@
   color: var(--text-muted);
 }
 
-.section-value {
-  font-size: 13px;
-  font-weight: 600;
+.metric-primary-value {
+  font-size: 14px;
   color: var(--text-primary);
+  font-weight: 500;
 }
 
-.section-subvalue {
+.metric-primary-value strong {
+  font-weight: 700;
+  font-size: 16px;
+  color: #0f172a;
+}
+
+.mode-badge-ai {
   font-size: 12px;
-  color: var(--text-secondary);
-}
-
-.status-badge-neutral {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 5px 9px;
-  background-color: var(--bg-subtle);
-  border: 1px solid var(--border-subtle);
+  font-weight: 700;
+  color: var(--accent-primary);
+  background-color: var(--accent-light);
+  border: 1px solid var(--accent-border);
+  padding: 3px 8px;
   border-radius: 4px;
+  display: inline-block;
   width: fit-content;
+}
+
+.phase-indicator-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin-top: 2px;
 }
 
-.status-badge-text {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-secondary);
-}
-
-.coordinates-box {
-  background-color: var(--bg-subtle);
-  border: 1px solid var(--border-subtle);
-  border-radius: 6px;
-  padding: 8px 10px;
-  font-family: var(--font-mono);
-  font-size: 12px;
+.mini-traffic-light {
   display: flex;
-  flex-direction: column;
   gap: 4px;
-  margin-top: 2px;
+  background-color: #0f172a;
+  padding: 3px 6px;
+  border-radius: 4px;
+  border: 1px solid #334155;
 }
 
-.coordinate-row {
-  display: flex;
-  justify-content: space-between;
+.mini-lamp {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  opacity: 0.25;
 }
 
-.coord-label {
-  color: var(--text-muted);
+.mini-lamp.red {
+  background-color: #ef4444;
 }
 
-.coord-value {
+.mini-lamp.red.active {
+  opacity: 1;
+  box-shadow: 0 0 6px #ef4444;
+}
+
+.mini-lamp.amber {
+  background-color: #f59e0b;
+}
+
+.mini-lamp.amber.active {
+  opacity: 1;
+  box-shadow: 0 0 6px #f59e0b;
+}
+
+.mini-lamp.green {
+  background-color: #22c55e;
+}
+
+.mini-lamp.green.active {
+  opacity: 1;
+  box-shadow: 0 0 6px #22c55e;
+}
+
+.phase-name {
+  font-size: 13px;
+  font-weight: 700;
   color: var(--text-primary);
-  font-weight: 500;
 }
 
-.verification-text {
-  font-size: 11px;
-  color: var(--text-muted);
-  line-height: 1.4;
-}
-
-.panel-section-notice {
+.panel-disclaimer-notice {
   border-top: 1px solid var(--border-subtle);
   padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
-.notice-text {
+.disclaimer-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.disclaimer-text {
   font-size: 11px;
   color: var(--text-muted);
   line-height: 1.45;
@@ -863,6 +1074,7 @@
 }
 
 .code-pill {
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
   background-color: var(--bg-subtle);

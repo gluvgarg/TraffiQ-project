@@ -1,10 +1,10 @@
 # TraffiQ — AI Adaptive Traffic Signal System (Frontend)
 
-Operational regional traffic management interface built with React, Vite, and Mapbox GL JS.
+Operational regional traffic management interface built with React, Vite, and Mapbox GL JS for regional traffic-control operators.
 
 ## Overview
 
-TraffiQ provides an interactive, contained operations dashboard for monitoring regional traffic corridors and candidate adaptive signal locations. This frontend application focuses on the pilot monitoring area in **Connaught Place, Central Delhi**.
+TraffiQ provides an interactive, contained operations dashboard for regional traffic operators to inspect signal states across monitored corridors. The current interface operates in demonstration mode using synthetic pilot records for **Connaught Place, Central Delhi**.
 
 ## Tech Stack
 
@@ -20,36 +20,43 @@ TraffiQ provides an interactive, contained operations dashboard for monitoring r
 src/
 ├── components/
 │   ├── Navbar.jsx               # Horizontal operations navigation bar
-│   ├── MapView.jsx              # Contained Mapbox GL JS map container with J1/J2 markers
-│   └── JunctionDetailsPanel.jsx # Two-state junction panel (candidate list / inspected details)
+│   ├── MapView.jsx              # Mapbox GL JS map with vertical 3-lamp signal markers
+│   └── JunctionDetailsPanel.jsx # Operator panel: Monitored signal list & synthetic telemetry inspector
 ├── pages/
 │   ├── OverviewPage.jsx         # Contained two-column operational dashboard (65% map / 35% panel)
 │   ├── JunctionsPage.jsx        # Pilot candidate junctions table and map links
 │   ├── AnalyticsPage.jsx        # Traffic performance analytics empty state
 │   └── EmergencyEventsPage.jsx  # Emergency corridor and preemption monitoring empty state
 ├── data/
-│   └── junctions.js             # Verified coordinates and candidate junction dataset
+│   ├── junctions.js             # Verified geographic coordinates and regional boundary data
+│   └── demoTrafficData.js       # Synthetic demo signal records (J1, J2) with active phases and timers
 ├── styles/
 │   ├── global.css               # Typography, resets, color tokens, viewport settings
-│   └── App.css                  # Layout, navbar, map, table, and panel styles
+│   └── App.css                  # Layout, navbar, map, signal markers, and operator panel styles
 ├── App.jsx                      # Root application component with view routing
 └── main.jsx                     # Application entry point
 ```
 
-## Dashboard Layout & Operations
+## Operator Dashboard & Traffic Signal Markers
 
-- **Overview:** Professional two-column operations layout:
-  - **Left (~65%):** Contained Mapbox interactive map (`streets-v12` style) with navigation controls, street-level zoom, and compact `J1` and `J2` markers with hover tooltips.
-  - **Right (~35%):** Dynamic junction panel that shows a compact list of monitored candidate junctions by default, and expands into full telemetry readiness details when a junction or marker is selected.
-- **Junctions:** Searchable catalog of registered candidate junctions with verified coordinates and a direct "View on map" navigation action.
-- **Analytics & Emergency Events:** Honest, professional empty states explaining telemetry and emergency service integration readiness.
+- **Clear Traffic-Signal Markers:**
+  - Compact vertical traffic-light housing with red, amber, and green lamps.
+  - Identification badge (`J1`, `J2`) pinned directly to the signal head.
+  - Active simulated phase illuminated with glowing green lamp (dimmed red and amber).
+  - Selected signal marker highlights with a restrained blue accent ring and elevation.
+- **Operator Signal Panel:**
+  - **Default View:** Compact list of monitored signals with active phase previews (`North–South GREEN 18s`, `East–West GREEN 12s`) and `DEMO` badges.
+  - **Selected View:** Detailed inspection displaying Junction ID and road names, `DEMO DATA` badge, Control Mode (`AI (DEMO)`), Simulated Signal Phase, Remaining Green Time, Vehicles Waiting, and Estimated Queue Length.
+  - Includes a `← Back to junction list` action to return to overview.
 
-## Pilot Candidate Junctions
+## Synthetic Demonstration Records (`src/data/demoTrafficData.js`)
 
-| Code | Junction Location | Area | Coordinates | Verification Source |
-| :---: | :--- | :--- | :--- | :--- |
-| **J1** | Barakhamba Road – Tolstoy Marg | Connaught Place Outer / Barakhamba | `28.6299° N, 77.2248° E` | OpenStreetMap (Intersection crossing) |
-| **J2** | Janpath – Tolstoy Marg | Janpath Commercial Corridor | `28.6264° N, 77.2193° E` | OpenStreetMap Node 5056205486 / Parivahan Survey |
+| Code | Junction Location | Control Mode | Active Simulated Phase | Green Time | Vehicles Waiting | Queue Length |
+| :---: | :--- | :---: | :---: | :---: | :---: | :---: |
+| **J1** | Barakhamba Road – Tolstoy Marg | `AI (DEMO)` | North–South GREEN | `18 seconds` | `12` | `42 metres` |
+| **J2** | Janpath – Tolstoy Marg | `AI (DEMO)` | East–West GREEN | `12 seconds` | `7` | `25 metres` |
+
+*Note: These records are synthetic demonstration values for interface testing. Physical signal telemetry is not connected.*
 
 ## Getting Started
 
@@ -61,19 +68,15 @@ src/
 
 ### Environment Configuration
 
-Create a local `.env.local` file in the root directory (based on `.env.example`):
+Configure `VITE_MAPBOX_ACCESS_TOKEN` in `.env.local` (copied from `.env.example`):
 
 ```bash
 cp .env.example .env.local
 ```
 
-Define your Mapbox public token:
-
 ```env
 VITE_MAPBOX_ACCESS_TOKEN=pk.your_mapbox_token_here
 ```
-
-*(If no token is configured, the interface displays an informative configuration notice.)*
 
 ### Installation & Development
 
